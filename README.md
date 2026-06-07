@@ -1,46 +1,46 @@
 # sonder
 
-> *n.* the realization that each passer-by is living a life as vivid and
-> complex as your own.
+> **sonder** · *n.* the realization that each random passer-by is living a life
+> as vivid and complex as your own — populated with their own ambitions, their
+> own friends and routines and worries and inherited madness — an epic story
+> that goes on, invisibly, all around you.
 
-A crowd of points drifting in the dusk. Each one is a stranger. Notice one,
-click it, and a sliver of their life surfaces — what they're carrying, what
-they haven't told anyone, where they're headed — then dissolves back into the
-crowd.
+A crowd in the dusk. A thousand strangers, drifting. You can take in the whole
+of them at once and know none of them — or you can stop, choose one, and learn
+a single true thing about a life that was always there, going on without you.
 
-Built with three.js. The personality is almost entirely in the front: the
-quiet, the dusk palette, the way the camera turns its attention toward whoever
-you noticed.
+Then you let them go, and they dissolve back into the crowd.
 
-## Where the souls come from
+## what it is
 
-The lives are **generated**, not stored — a deterministic grammar where each
-point's seed grows the same person every time. But that machine doesn't live
-here. If you could read a hundred arrays in this repo, the magic would die.
+sonder is a small, quiet room built around one feeling: the quiet lurch of
+remembering that you are not the main character.
 
-So the generator (grammar + lexicon) is a separate, private service. This repo
-is only the face: it asks the engine for a *finished* person and never sees the
-machinery.
+That the woman who just passed you has a father in a hospital bed. That the man
+at the bus stop is in love for the first time in years and can't tell anyone.
+That every lit window at dusk is the centre of someone's entire world.
 
-```
-click point i  ->  fetch(`${VITE_SOUL_API}/?seed=…`)  ->  { name, age, summary, secondary }
-```
+You already know this. You just rarely *feel* it.
 
-Latency is hidden by prefetching on hover (the life is usually in hand before
-the click) and by the card's own unhurried fade-in.
+The piece doesn't argue the point — it stages it. The crowd is too large to
+hold. Your attention is a single thread. Each person you notice is already
+whole, and your noticing is the only thing that ever brings them into the
+light: a glance, a fragment, and then the street again. Meeting them is exactly
+as much as you will ever get.
 
-## Run
+It is meant to be small, and slow, and a little sad. Not an answer to anything.
+A place to stand for a minute and feel the size of the world honestly.
 
-```sh
-npm install
-cp .env.example .env.local   # point VITE_SOUL_API at a running sonder-engine
-npm run dev
-```
+## on attention
 
-You need the engine running (see `sonder-engine`, `wrangler dev` → localhost:8787).
+There is nothing to finish here. No goal, no score, no one you're meant to
+reach. You cannot meet everyone — that isn't a limitation, it's the whole
+point. The crowd outlasts your patience the way a real one does.
 
-## Knobs
+Notice who you notice. Let the rest stay strangers.
 
-`src/main.js` — `COUNT`, `SPREAD`, `FOG_DENSITY`, the palette, `autoRotateSpeed`,
-the raycaster `threshold`. `src/soul.js` — `seedFor` decides whether the crowd
-is fixed (same souls every visit) or fresh per session.
+They go on either way.
+
+---
+
+<sub>Running it locally: `npm install && npm run dev`.</sub>
