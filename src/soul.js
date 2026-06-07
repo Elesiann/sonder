@@ -13,11 +13,13 @@ export const FACETS = [
   { key: "heading", label: "headed" },
 ];
 
-// A fixed crowd: point i is always the same soul, this visit or the next.
-// (Knuth multiplicative hash — just so the seeds aren't a naked 0,1,2,3…)
-// Want a fresh world every visit instead? Assign a random seed per point at
-// init and pass that here; nothing else changes.
-export const seedFor = (i) => (Math.imul(i + 1, 2654435761) >>> 0);
+// A city, not a fixed gallery: a fresh crowd every visit, stable within it.
+// One random salt per page load — so point i is the same soul while you're
+// here (re-clicking isn't a glitch), but a new stranger next time you come,
+// the way you never cross the same passer-by twice. The space is vast enough
+// that repeats within a visit are effectively nil.
+const SESSION = (Math.random() * 0x100000000) >>> 0;
+export const seedFor = (i) => (Math.imul(i + 1, 2654435761) ^ SESSION) >>> 0;
 
 const cache = new Map(); // seed -> persona
 const inflight = new Map(); // seed -> Promise<persona>
