@@ -32,7 +32,7 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(120% 120% at 50% 44%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.55) 100%);
+  background: radial-gradient(125% 125% at 50% 46%, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, 0.42) 100%);
 }
 
 /* faint film grain — analog soul, not noise */
@@ -134,8 +134,12 @@ body {
   bottom: clamp(1.5rem, 9vh, 5rem);
   width: min(86vw, 23rem);
   padding-left: 1.15rem;
-  border-left: 1px solid rgba(199, 154, 99, 0.45);
+  border-left: 1px solid rgba(199, 154, 99, 0); /* the hairline appears only with a soul shown */
+  transition: border-color 1.1s ease;
   pointer-events: none;
+}
+#card.show {
+  border-left-color: rgba(199, 154, 99, 0.45);
 }
 #card .line {
   opacity: 0;

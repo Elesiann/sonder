@@ -3,14 +3,27 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { FACETS, getSoul, prefetch } from "./soul.js";
 
-// ---- palette: a sober dusk. cool greys, a few warm "lit windows", nothing glows ----
-const COOL = new THREE.Color(0x8b919e); // most people, seen from far
-const WARM = new THREE.Color(0xc79a63); // a few, lit from within
+// ---- palette: a sober dusk. a few muted hues so the crowd has variety
+// without turning into a fairground. weights sum to 1; amber is the rare
+// "lit window". nothing glows. ----
+const PALETTE = [
+  { color: new THREE.Color(0x8b919e), weight: 0.42 }, // cool grey — most people
+  { color: new THREE.Color(0x77879c), weight: 0.2 }, // dusty blue
+  { color: new THREE.Color(0x9a8a9e), weight: 0.15 }, // faded mauve
+  { color: new THREE.Color(0x869a8f), weight: 0.13 }, // muted sage
+  { color: new THREE.Color(0xc79a63), weight: 0.1 }, // warm amber — lit from within
+];
 const NOTICE = new THREE.Color(0xf4e6c2); // the one you happen to notice
 
-const COUNT = 1000;
-const SPREAD = 34;
-const FOG_DENSITY = 0.011; // how fast distant souls dissolve into the dusk
+function pickHue() {
+  let r = Math.random();
+  for (const p of PALETTE) if ((r -= p.weight) < 0) return p.color;
+  return PALETTE[0].color;
+}
+
+const COUNT = 2400;
+const SPREAD = 48;
+const FOG_DENSITY = 0.009; // how fast distant souls dissolve into the dusk
 const DPR = Math.min(devicePixelRatio, 2);
 
 const app = document.getElementById("app");
@@ -33,7 +46,7 @@ app.appendChild(renderer.domElement);
 renderer.domElement.style.cursor = "grab";
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 400);
+const camera = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 400);
 camera.position.set(0, 3, 80);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -57,10 +70,10 @@ for (let i = 0; i < COUNT; i++) {
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos(2 * Math.random() - 1);
   positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.62; // flattened a little
+  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.58; // flattened a little
   positions[i * 3 + 2] = r * Math.cos(phi);
 
-  tmp.copy(Math.random() < 0.13 ? WARM : COOL).multiplyScalar(0.5 + Math.random() * 0.6);
+  tmp.copy(pickHue()).multiplyScalar(0.5 + Math.random() * 0.6);
   aColor[i * 3] = tmp.r;
   aColor[i * 3 + 1] = tmp.g;
   aColor[i * 3 + 2] = tmp.b;
@@ -137,7 +150,7 @@ const noticeMat = new THREE.SpriteMaterial({
   blending: THREE.AdditiveBlending, // a single warm light, intentional — not the whole field
 });
 const notice = new THREE.Sprite(noticeMat);
-notice.scale.setScalar(5.5);
+notice.scale.setScalar(5.0);
 scene.add(notice);
 
 // ---- picking ----
@@ -276,7 +289,7 @@ function frame() {
   // the soul you noticed lights up; the camera turns its attention toward them
   const focus = selected >= 0 ? selected : hovered;
   if (focus >= 0) notice.position.copy(focusPos.fromBufferAttribute(geo.attributes.position, focus));
-  const noticeTarget = selected >= 0 ? 1 : hovered >= 0 ? 0.5 : 0;
+  const noticeTarget = selected >= 0 ? 0.55 : hovered >= 0 ? 0.28 : 0;
   noticeMat.opacity += (noticeTarget - noticeMat.opacity) * 0.15;
 
   if (selected >= 0) targetGoal.fromBufferAttribute(geo.attributes.position, selected);
