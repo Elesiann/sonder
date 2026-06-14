@@ -47,4 +47,4 @@ They go on either way.
 
 <sub>**Local:** `npm install && npm run dev`. Point `VITE_SOUL_API` at the engine (see `.env.example`); absent it, the front falls back to `http://localhost:8787`.</sub>
 
-<sub>**Deploy:** front on Vercel — `vercel --prod` (the `VITE_SOUL_API` build var is set in the project). The engine is a separate Cloudflare Worker (`wrangler deploy`).</sub>
+<sub>**Deploy:** `npm run deploy` — builds on Vercel (`VITE_SOUL_API` is set in the project) and re-points `astranger.vercel.app` at the new deployment. The engine is a separate Cloudflare Worker (`wrangler deploy`).</sub>
