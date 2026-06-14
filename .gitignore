@@ -8,3 +8,6 @@ dist
 
 # brainstorming visual companion sessions
 .superpowers/
+
+# local design notes (kept on disk, not versioned)
+docs/superpowers/
