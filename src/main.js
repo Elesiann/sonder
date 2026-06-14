@@ -198,11 +198,12 @@ const crowdMat = new THREE.ShaderMaterial({
       float defocus = uFocusAmt * clamp(abs(dist - uFocusZ) / uFocusRange, 0.0, 1.0);
       vDefocus = defocus;
       gl_PointSize = aScale * uSizeScale * breathe * (180.0 / dist) * uPixelRatio * (1.0 + defocus * 2.2);
-      gl_PointSize = min(gl_PointSize, 88.0 * uPixelRatio); // never a giant blob in your face
+      gl_PointSize = min(gl_PointSize, 64.0 * uPixelRatio); // never a giant blob in your face
       // dusk dissolve (exp2 fog) folded into alpha so distant souls fade into the sky
       float fog = 1.0 - exp(-uFogDensity * uFogDensity * dist * dist);
-      // souls right on top of the camera fade out, so moving through the crowd is clean
-      float nearFade = smoothstep(1.5, 13.0, dist);
+      // souls near the camera fade out well before they reach the lens, so a
+      // bright (amber) one drifting past can't flare into a flashbang
+      float nearFade = smoothstep(2.0, 18.0, dist);
       vAlpha = uOpacity * (1.0 - fog) * nearFade * (0.7 + 0.3 * breathe) * (1.0 - 0.8 * defocus);
       gl_Position = projectionMatrix * mv;
     }
@@ -433,6 +434,11 @@ function frame() {
   composer.render();
 }
 frame();
+
+// reveal the styled UI once we're painting — the .preload class kept the text
+// hidden through the brief gap before the app stylesheet (JS-injected) loaded,
+// so the first frame is dark, never a flash of white / unstyled text.
+requestAnimationFrame(() => document.documentElement.classList.remove("preload"));
 
 // dev-only test hook: lets Playwright drive reveal/conceal without pixel-hunting
 // for a point. stripped from production builds.

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="preload">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,6 +10,25 @@
       href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap"
       rel="stylesheet"
     />
+    <!-- critical baseline: dark from the first paint, text hidden until the app
+         stylesheet loads (it's injected by JS), so there is no flash of white /
+         unstyled text. main.js removes .preload once it's running. -->
+    <style>
+      html {
+        background: #060608;
+      }
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      html.preload #intro,
+      html.preload #card,
+      html.preload #hint,
+      html.preload #mark {
+        opacity: 0 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
