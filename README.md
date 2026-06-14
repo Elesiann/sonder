@@ -43,8 +43,8 @@ They go on either way.
 
 ---
 
-<sub>**Live:** [sonder-ecp.pages.dev](https://sonder-ecp.pages.dev) — a Vite + three.js front. The strangers come from a small private engine (a Cloudflare Worker) the front asks for one finished life at a time.</sub>
+<sub>**Live:** [astranger.vercel.app](https://astranger.vercel.app) — a Vite + three.js front on Vercel. The strangers come from a small private engine (a Cloudflare Worker) the front asks for one finished life at a time.</sub>
 
 <sub>**Local:** `npm install && npm run dev`. Point `VITE_SOUL_API` at the engine (see `.env.example`); absent it, the front falls back to `http://localhost:8787`.</sub>
 
-<sub>**Deploy:** `VITE_SOUL_API=<worker-url> npm run build`, then `npx wrangler pages deploy dist`. The engine is deployed separately.</sub>
+<sub>**Deploy:** front on Vercel — `vercel --prod` (the `VITE_SOUL_API` build var is set in the project). The engine is a separate Cloudflare Worker (`wrangler deploy`).</sub>
