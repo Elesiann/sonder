@@ -144,13 +144,22 @@ body {
 #card .line {
   opacity: 0;
   transform: translateY(10px);
+  filter: blur(8px);
+  /* exit: quick, downward — departure is sudden, arrival is gentle (asymmetry) */
   transition:
-    opacity 0.9s ease,
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.25s ease-in,
+    transform 0.25s ease-in,
+    filter 0.25s ease-in;
 }
 #card.show .line {
   opacity: 1;
   transform: none;
+  filter: blur(0);
+  /* entry: slow ease-out — each line comes into focus, like noticing someone */
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 /* stagger delays are set per-line in JS (the facet rows are dynamic / N categories) */
 
