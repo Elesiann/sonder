@@ -92,13 +92,37 @@ const aSeed = new Float32Array(COUNT); // each soul breathes on its own phase
 const aScale = new Float32Array(COUNT);
 const tmp = new THREE.Color();
 
+// ---- the slow current ----
+// the crowd is not a screensaver drifting at random — everyone is going
+// somewhere, on a shared, unhurried flow. each soul moves at its own pace and
+// wanders its own path, so people cross and pass, but no one's speed says
+// anything about who they are (you can't read a life from the outside). the
+// flow wraps within a bounded volume, so the field stays full as it streams.
+const FLOW = new THREE.Vector3(1, 0, 0.36).normalize(); // direction everyone drifts
+const FLOW_LEN = SPREAD * 1.15; // half-length of the streaming volume before wrap
+const FLOW_SPEED = 1.1; // base pace — contemplative, a slow walk
+const homeAlong = new Float32Array(COUNT); // home distance along the flow axis
+const homePerp = new Float32Array(COUNT * 3); // home position minus its along-component
+const aPace = new Float32Array(COUNT); // per-soul speed factor — paths vary, no meaning
+
 for (let i = 0; i < COUNT; i++) {
   const r = SPREAD * Math.cbrt(Math.random()); // denser toward the middle
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos(2 * Math.random() - 1);
-  positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.82; // flattened a touch
-  positions[i * 3 + 2] = r * Math.cos(phi);
+  const x = r * Math.sin(phi) * Math.cos(theta);
+  const y = r * Math.sin(phi) * Math.sin(theta) * 0.82; // flattened a touch
+  const z = r * Math.cos(phi);
+  positions[i * 3] = x;
+  positions[i * 3 + 1] = y;
+  positions[i * 3 + 2] = z;
+
+  // decompose the home position into "along the flow" and "perpendicular to it"
+  const s = x * FLOW.x + y * FLOW.y + z * FLOW.z;
+  homeAlong[i] = s;
+  homePerp[i * 3] = x - FLOW.x * s;
+  homePerp[i * 3 + 1] = y - FLOW.y * s;
+  homePerp[i * 3 + 2] = z - FLOW.z * s;
+  aPace[i] = 0.7 + Math.random() * 0.6;
 
   tmp.copy(pickHue()).multiplyScalar(0.5 + Math.random() * 0.6);
   aColor[i * 3] = tmp.r;
@@ -346,6 +370,21 @@ function frame() {
   requestAnimationFrame(frame);
   const t = clock.getElapsedTime();
   crowdMat.uniforms.uTime.value = t;
+
+  // stream the crowd along the slow current. the one you've stopped for pauses;
+  // the rest keep flowing past, indifferent — you, halted, against the current.
+  const pos = geo.attributes.position.array;
+  const twoLen = 2 * FLOW_LEN;
+  for (let i = 0; i < COUNT; i++) {
+    if (i === selected) continue; // the noticed soul holds still
+    let s = homeAlong[i] + FLOW_SPEED * aPace[i] * t;
+    s = ((((s + FLOW_LEN) % twoLen) + twoLen) % twoLen) - FLOW_LEN; // wrap into [-LEN, LEN]
+    const ph = aSeed[i] * 6.2831853;
+    pos[i * 3] = FLOW.x * s + homePerp[i * 3] + Math.sin(t * 0.22 + ph) * 1.3;
+    pos[i * 3 + 1] = FLOW.y * s + homePerp[i * 3 + 1] + Math.sin(t * 0.31 + ph * 1.7) * 1.0;
+    pos[i * 3 + 2] = FLOW.z * s + homePerp[i * 3 + 2] + Math.cos(t * 0.19 + ph) * 1.3;
+  }
+  geo.attributes.position.needsUpdate = true;
 
   // the crowd materialises out of the dusk, then obeys attention
   introK = t < 2.6 ? 1 - Math.pow(1 - t / 2.6, 3) : 1; // ease-out cubic fade-in
