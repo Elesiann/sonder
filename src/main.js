@@ -58,6 +58,25 @@ soundBtn.addEventListener("click", async () => {
   soundBtn.setAttribute("aria-label", `ambient sound: ${isOn ? "on" : "off"}`);
 });
 
+// UI controls sit above the canvas: swallow their pointer events so hovering or
+// clicking a button never reaches (and notices) a soul drifting behind it.
+function shield(el) {
+  for (const type of ["pointerdown", "pointerup", "pointermove", "click"]) {
+    el.addEventListener(type, (e) => e.stopPropagation());
+  }
+}
+shield(soundBtn);
+
+// the frame mark opens a quiet word about the piece
+const mark = document.getElementById("mark");
+const about = document.getElementById("about");
+shield(mark);
+mark.addEventListener("click", () => about.showModal());
+about.querySelector(".close").addEventListener("click", () => about.close());
+about.addEventListener("click", (e) => {
+  if (e.target === about) about.close(); // click outside the panel (on the backdrop)
+});
+
 const f = {
   name: card.querySelector(".name"),
   age: card.querySelector(".age"),

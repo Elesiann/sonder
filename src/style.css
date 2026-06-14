@@ -115,7 +115,92 @@ body.has-cursor #cursor {
   text-transform: uppercase;
   color: #565663;
   opacity: 0.55;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    opacity 0.4s ease,
+    color 0.4s ease;
+}
+#mark:hover {
+  opacity: 0.95;
+  color: #8a8576;
+}
+
+/* the about dialog — a quiet, reflective panel on the piece itself */
+#about {
+  margin: auto; /* native centering for showModal() */
+  max-width: 34rem;
+  width: min(90vw, 34rem);
+  border: none;
+  border-radius: 2px;
+  padding: clamp(1.8rem, 4vw, 3rem);
+  background: rgba(11, 11, 17, 0.97);
+  color: #cdc6b6;
+  font-family: "Spectral", Georgia, serif;
+  font-weight: 300;
+  line-height: 1.72;
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.65);
+}
+#about[open] {
+  animation: aboutIn 0.5s ease both;
+}
+@keyframes aboutIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+#about::backdrop {
+  background: rgba(4, 4, 8, 0.72);
+  backdrop-filter: blur(3px);
+}
+#about h2 {
+  font-weight: 300;
+  font-size: clamp(1.7rem, 1.4rem + 1.4vw, 2.2rem);
+  letter-spacing: 0.04em;
+  color: #ece4d2;
+}
+#about .def {
+  font-style: italic;
+  font-size: 0.96rem;
+  color: #8a8576;
+  margin: 0.55rem 0 1.7rem;
+}
+#about .def .pos {
+  font-style: normal;
+  color: #c79a63;
+  margin-right: 0.35rem;
+}
+#about p {
+  margin-bottom: 1rem;
+  font-size: 1.02rem;
+}
+#about .coda {
+  font-style: italic;
+  color: #c79a63;
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+}
+#about .close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.9rem;
+  display: grid;
+  place-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  color: #565663;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+#about .close:hover {
+  color: #cdc6b6;
 }
 
 /* opening: the word, then the meaning, then gone */
