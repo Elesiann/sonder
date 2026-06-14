@@ -62,6 +62,32 @@ body {
   }
 }
 
+/* the cursor's soft warm presence — sits above the field, below the text */
+#cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(199, 154, 99, 0.09) 0%,
+    rgba(199, 154, 99, 0.038) 36%,
+    rgba(199, 154, 99, 0) 70%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  will-change: transform;
+}
+body.has-cursor #cursor {
+  opacity: 1;
+}
+
 /* darkens the corner the card sits in */
 #scrim {
   position: fixed;
@@ -204,6 +230,48 @@ body {
   font-size: 0.98rem;
   line-height: 1.5;
   color: #cdc6b6;
+}
+
+/* the only visible control: ambient sound, off until you ask for it */
+#sound {
+  position: fixed;
+  z-index: 5;
+  right: clamp(1rem, 3vw, 2.2rem);
+  bottom: clamp(1rem, 3vh, 2.2rem);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-content: center;
+  border: none;
+  background: none;
+  color: #565663;
+  cursor: pointer;
+  opacity: 0.55;
+  transition:
+    opacity 0.4s ease,
+    color 0.4s ease;
+}
+#sound:hover {
+  opacity: 1;
+  color: #8a8576;
+}
+#sound.on {
+  color: #c79a63;
+  opacity: 0.9;
+}
+#sound .waves {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#sound.on .waves {
+  opacity: 1;
+}
+#sound .slash {
+  opacity: 0.9;
+  transition: opacity 0.4s ease;
+}
+#sound.on .slash {
+  opacity: 0;
 }
 
 #hint {
