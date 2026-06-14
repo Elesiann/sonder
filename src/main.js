@@ -24,8 +24,8 @@ function pickHue() {
 }
 
 const COUNT = 2400;
-const SPREAD = 48;
-const FOG_DENSITY = 0.009; // how fast distant souls dissolve into the dusk
+const SPREAD = 72; // the crowd is a volume you stand inside, not an oval you face
+const FOG_DENSITY = 0.0085; // how fast distant souls dissolve into the dusk
 const DPR = Math.min(devicePixelRatio, 2);
 
 const app = document.getElementById("app");
@@ -73,17 +73,17 @@ app.appendChild(renderer.domElement);
 renderer.domElement.style.cursor = "grab";
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 400);
-camera.position.set(0, 3, 80);
+const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 400);
+camera.position.set(0, 2, 34); // inside the field — people near and far, all around
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
 controls.enablePan = false;
-controls.minDistance = 28;
-controls.maxDistance = 150;
-controls.autoRotate = true; // unhurried drift
-controls.autoRotateSpeed = 0.28;
+controls.minDistance = 8; // you can press in among them
+controls.maxDistance = 96;
+controls.autoRotate = true; // unhurried drift — like turning your head in a crowd
+controls.autoRotateSpeed = 0.22;
 
 // ---- the crowd ----
 const positions = new Float32Array(COUNT * 3);
@@ -97,7 +97,7 @@ for (let i = 0; i < COUNT; i++) {
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos(2 * Math.random() - 1);
   positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.58; // flattened a little
+  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.82; // flattened a touch
   positions[i * 3 + 2] = r * Math.cos(phi);
 
   tmp.copy(pickHue()).multiplyScalar(0.5 + Math.random() * 0.6);
@@ -155,9 +155,12 @@ const crowdMat = new THREE.ShaderMaterial({
       float defocus = uFocusAmt * clamp(abs(dist - uFocusZ) / uFocusRange, 0.0, 1.0);
       vDefocus = defocus;
       gl_PointSize = aScale * uSizeScale * breathe * (180.0 / dist) * uPixelRatio * (1.0 + defocus * 2.2);
+      gl_PointSize = min(gl_PointSize, 88.0 * uPixelRatio); // never a giant blob in your face
       // dusk dissolve (exp2 fog) folded into alpha so distant souls fade into the sky
       float fog = 1.0 - exp(-uFogDensity * uFogDensity * dist * dist);
-      vAlpha = uOpacity * (1.0 - fog) * (0.7 + 0.3 * breathe) * (1.0 - 0.8 * defocus);
+      // souls right on top of the camera fade out, so moving through the crowd is clean
+      float nearFade = smoothstep(1.5, 13.0, dist);
+      vAlpha = uOpacity * (1.0 - fog) * nearFade * (0.7 + 0.3 * breathe) * (1.0 - 0.8 * defocus);
       gl_Position = projectionMatrix * mv;
     }
   `,
